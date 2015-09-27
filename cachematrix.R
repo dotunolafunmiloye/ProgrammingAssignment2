@@ -1,5 +1,4 @@
 ##makeCacheMatrix: function creates a special "matrix" object that can cache its inverse.
-
 makeCacheMatrix <- function(mymatrix = matrix()) {
       
       #  mymatrix should be a  square matrix. 
@@ -39,7 +38,6 @@ makeCacheMatrix <- function(mymatrix = matrix()) {
          
 }
 
-
 #cacheSolve: This function computes the inverse of the special "matrix" returned by makeCacheMatrix above. 
 #If the inverse has already been calculated (and the matrix has not changed), cacheSolve retrieves the previously calculated value.
 
@@ -52,10 +50,27 @@ cacheSolve <- function(mymatrix, ...) {
             matrix_status
       }
       # if matrix_status has changed, then recalculate, and update matrix_status
+      if (determinantSolve(mymatrix) == "YES") {
       matrix_data <- mymatrix$getmatrix()
       matrix_status <- solve(matrix_data, ...)
       mymatrix$setsolve(matrix_status)
       return(matrix_status)
+   } else {
+        message <- paste( "The matrix determinant is too small and cannot be inverted.  The square matrix is therefore singular")
+               stop(message)
+   }
 
 }
 
+# Find the determinant of the matrix, to determine if it can be inversed.
+determinantSolve <- function(mymatrix, ...) {
+      majordet <- determinant(mymatrix$getmatrix(), logarithm=TRUE)
+      majordet_modulo <- majordet$modulus
+      if ( majordet_modulo >  0.001) {
+            invert <- "YES"
+            return(invert)
+      } else {
+            invert <- "NO"
+            return(invert)
+      }
+}
